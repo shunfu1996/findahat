@@ -1,5 +1,5 @@
 const prompt = require("prompt-sync")({ sigint: true });
-var term = require('terminal-kit').terminal;
+// var term = require('terminal-kit').terminal;
 
 
 const hat = "^";
@@ -12,7 +12,7 @@ const pathCharacter = "*";
 //   ['░', 'O', '░'],
 //   ['░', '░', '░'],
 //   ['░', '^', '░'],
-// ];
+// ]; 
 
 class Field {
     constructor() /* fieldArray */ {
@@ -26,12 +26,18 @@ class Field {
         // this.field[x][y] = pathCharacter;
     }
 
-    runGame() {
-        term.green("GOOD!\n");
+    runGame(mode) {
+        // term.green("GOOD!\n");
         console.log("GOOD!");
         this.print();
         // console.log(this.field.length);
-        this.move();
+        if (mode === "normal") {
+            console.log('is normal mode')
+            this.move();
+        } else if (mode === "hard") {
+            console.log('is hard mode')
+            this.hardMove();
+        }
     }
     endGame() {
 
@@ -82,6 +88,96 @@ class Field {
         }
     }
 
+    hardMove() {
+        let lastWay = null;
+        while (this.status === true) {
+            const way = prompt("which way: ");
+            switch (way) {
+                case "w":
+                    // console.log(lastWay);
+                    this.y -= 1;
+                    this.makeHole(lastWay, way);
+                    lastWay = 'w';
+                    // console.log(lastWay);
+                    break;
+                case "a":
+                    // console.log(lastWay);
+                    this.x -= 1;
+                    this.makeHole(lastWay, way);
+                    lastWay = 'a';
+                    // console.log(lastWay);
+                    break;
+                case "s":
+                    // console.log(lastWay);
+                    this.y += 1;
+                    this.makeHole(lastWay, way);
+                    lastWay = 's';
+                    // console.log(lastWay);
+                    break;
+                case "d":
+                    // console.log(lastWay);
+                    this.x += 1;
+                    this.makeHole(lastWay, way);
+                    lastWay = 'd';
+                    // console.log(lastWay);
+                    break;
+            }
+
+            // if (this.getOutField()) {
+            //   this.endGame();
+            // } else if (this.field[this.y][this.x] === "░") {
+            if (this.getOutField()) {
+                console.log("You can't get out of the field");
+                this.status = false;
+            } else {
+                this.status = true;
+                this.endGame();
+                this.field[this.y][this.x] = "*";
+                this.print();
+            }
+            // console.log(this.field[[].length]);
+            // } else {
+            //   this.endGame();
+            // }
+        }
+    }
+
+    makeHole(lastWay, way) {
+
+        console.log(lastWay)
+        console.log(way)
+
+        if (lastWay !== way) {
+            this.randomHole();
+        } else {
+            console.log('save')
+        }
+    }
+    randomHole() {
+        let randomHolePointX = Math.floor(Math.random() * this.width);
+        let randomHolePointY = Math.floor(Math.random() * this.height);
+        let randomHolePlace = [randomHolePointY, randomHolePointX];
+        let currentPlace = [this.y, this.x];
+        console.log('1st');
+        console.log(randomHolePlace);
+        console.log(currentPlace);
+        while (randomHolePlace == currentPlace) {
+            randomHolePointX = Math.floor(Math.random() * this.width);
+            randomHolePointY = Math.floor(Math.random() * this.height);
+            randomHolePlace = [randomHolePointY, randomHolePointX];
+            console.log(randomHolePlace);
+            console.log(currentPlace);
+            console.log('2st');
+        }
+        if (this.field[randomHolePointY][randomHolePointX] !== "O" &&
+            this.field[randomHolePointY][randomHolePointX] !== "^") {
+            this.field[randomHolePointY][randomHolePointX] = "O"
+            console.log("true")
+        } else {
+            this.randomHole()
+        }
+    }
+
     start() {
         // let isPlaying = true;
         const ready = prompt("Hello! Are You ready?");
@@ -98,15 +194,15 @@ class Field {
     gameMode() {
         const mode = prompt("Game mode: normal , hard  ");
         if (mode === "normal") {
-            this.runGame();
+            this.runGame("normal");
             console.log(this.pathCharacter);
             // this.field[this.x][this.y] = this.field;
         } else if (mode === "hard") {
             // console.log(this.height);
             // console.log(this.width);
             // console.log(this.percentage);
-            this.generateField(this.height, this.width, this.percentage * 2);
-            this.runGame();
+            // this.generateField(this.height, this.width, this.percentage * 2);
+            this.runGame("hard");
         }
     }
 
@@ -166,7 +262,7 @@ class Field {
 
 const myField = new Field();
 //Field.generateField
-myField.generateField(15, 25, 0.2);
+myField.generateField(4, 5, 0.2);
 myField.start();
 
 
