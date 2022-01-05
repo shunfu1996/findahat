@@ -1,5 +1,5 @@
 const prompt = require("prompt-sync")({ sigint: true });
-// var term = require('terminal-kit').terminal;
+var term = require('terminal-kit').terminal;
 class Element {
     constructor() {
         this.hat = "^";
@@ -57,11 +57,11 @@ class Game {
     isEndGame() {
         if (this.isHat()) {
             this.print();
-            console.log("Congratulations! You find a hat!");
+            term.yellow("Congratulations! You find a hat!\n");
             this.ele.status = false;
         } else if (this.isHole()) {
             this.print();
-            console.log("GameOver.You fell into the hole!");
+            term.red("GameOver.You fell into the hole!\n");
             this.ele.status = false;
         } else {
             this.play.field[this.play.y][this.play.x] = this.ele.pathCharacter;
@@ -106,7 +106,7 @@ class Game {
                     break;
             }
             if (this.getOutField()) {
-                console.log("You can't get out of the field");
+                term.red("You can't get out of the field\n");
                 this.ele.status = false;
             } else {
                 this.ele.status = true;
@@ -144,7 +144,7 @@ class Game {
                     break;
             }
             if (this.getOutField()) {
-                console.log("You can't get out of the field");
+                term.red("You can't get out of the field\n");
                 this.ele.status = false;
             } else {
                 this.ele.status = true;
@@ -160,7 +160,7 @@ class Game {
         } else {
             console.log('~safe~ Keep going on.')
         } */
-        lastWay !== way ? this.randomHole() : console.log('~safe~ Keep going on.');
+        lastWay !== way ? this.randomHole() : term.green('~safe~ Keep going on.\n');
     }
 
     randomHole() {
@@ -171,7 +171,7 @@ class Game {
             randomHolePointY = Math.floor(Math.random() * this.play.field.length);
         }
         this.play.field[randomHolePointY][randomHolePointX] = this.ele.hole;
-        console.log("!!Increasing Hole!! Please try not to turn a way!");
+        term.red.underline("!!Increasing Hole, you may lose immedately!! Please try not to turn a way!\n");
     }
 
     start() {
@@ -196,10 +196,11 @@ class Game {
 
 const newCharacter = new Element();
 const newField = new Field();
-Field.generateField(6, 9, 0.3, newCharacter, newField);
+Field.generateField(6, 9, 0.2, newCharacter, newField);
 const startGame = new Game(newField);
 
 startGame.start();
+
 
 
 
